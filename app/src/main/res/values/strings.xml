@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Kaptain</string>
+    <string name="label_view_reviews">View reviews</string>
+    <string name="label_rating">Rating: %1$.1f</string>
+    <string name="label_num_reviews">Review count: %1$d</string>
+    <string name="label_list">List</string>
+    <string name="label_map">Map</string>
+    <string name="user_image">user image</string>
+</resources>

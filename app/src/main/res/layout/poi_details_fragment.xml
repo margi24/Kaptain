@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/spacing_normal">
+
+    <TextView
+        android:id="@+id/poi_name_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="@color/purple_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Golden Gate Bridge" />
+
+    <TextView
+        android:id="@+id/poi_type_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/teal_700"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/poi_name_view"
+        tools:text="Bridge" />
+
+    <RatingBar
+        android:id="@+id/poi_rating_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_large"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:isIndicator="true"
+        android:numStars="@integer/nr_stars"
+        android:progressTint="@color/purple_500"
+        android:stepSize="0.1"
+        app:layout_constraintEnd_toStartOf="@+id/poi_num_reviews_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/poi_type_view"
+        tools:rating="5" />
+
+    <TextView
+        android:id="@+id/poi_num_reviews_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/poi_rating_view"
+        app:layout_constraintTop_toBottomOf="@+id/poi_type_view"
+        tools:text="Review count: 5" />
+
+    <Button
+        android:id="@+id/poi_view_reviews_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:text="@string/label_view_reviews"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/poi_rating_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

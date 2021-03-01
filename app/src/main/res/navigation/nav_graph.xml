@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/poiListFragment">
+
+    <fragment
+        android:id="@+id/poiDetailsFragment"
+        android:name="com.example.kaptain.ui.PoiDetailsFragment"
+        android:label="PoiDetailsFragment">
+        <argument
+            android:name="poi_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_poiDetailsFragment_to_reviewListFragment"
+            app:destination="@id/reviewListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/poiListFragment"
+        android:name="com.example.kaptain.ui.PoiListFragment"
+        android:label="PoiListFragment">
+        <action
+            android:id="@+id/action_poiListFragment_to_poiDetailsFragment"
+            app:destination="@id/poiDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewListFragment"
+        android:name="com.example.kaptain.ui.ReviewListFragment"
+        android:label="ReviewListFragment">
+        <argument
+            android:name="poi_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+</navigation>
