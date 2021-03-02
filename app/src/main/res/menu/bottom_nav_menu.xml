@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/poiListFragment"
+        android:icon="@drawable/ic_list"
+        android:title="@string/label_list" />
+
+    <item
+        android:id="@+id/poiMapFragment"
+        android:icon="@drawable/ic_map"
+        android:title="@string/label_map" />
+
+</menu>

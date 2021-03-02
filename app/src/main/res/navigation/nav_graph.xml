@@ -33,4 +33,12 @@
             android:defaultValue="0L"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/poiMapFragment"
+        android:name="com.example.kaptain.ui.PoiMapFragment"
+        android:label="PoiMapFragment">
+        <action
+            android:id="@+id/action_poiMapFragment_to_poiDetailsFragment"
+            app:destination="@id/poiDetailsFragment" />
+    </fragment>
 </navigation>

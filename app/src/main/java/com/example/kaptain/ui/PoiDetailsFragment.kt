@@ -10,15 +10,24 @@ import android.widget.Button
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.kaptain.R
 import com.example.kaptain.TAG
 import com.example.kaptain.data.poiList
+import com.example.kaptain.viewModel.PoiViewModel
 
 class PoiDetailsFragment : Fragment() {
 
+    private lateinit var nameTextView: TextView
+    private lateinit var typeTextView: TextView
+    private lateinit var ratingTextView: RatingBar
+    private lateinit var numReviewsTextView: TextView
+    private lateinit var reviewsButton: Button
+
     private val args: PoiDetailsFragmentArgs by navArgs()
+    private val viewModel: PoiViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -43,7 +52,16 @@ class PoiDetailsFragment : Fragment() {
         Log.d(TAG, "onViewCreated: called")
 
         val poiId = args.poiId
+        viewModel.getPoi(poiId)
         val poi = poiList.find { it.id == poiId }
+        view.apply {
+            nameTextView = findViewById(R.id.poi_name_view)
+            typeTextView = findViewById(R.id.poi_type_view)
+            ratingTextView = findViewById(R.id.poi_rating_view)
+            numReviewsTextView = findViewById(R.id.poi_num_reviews_view)
+            reviewsButton = findViewById(R.id.poi_view_reviews_button)
+        }
+
         poi?.let {
             view.apply {
                 findViewById<TextView>(R.id.poi_name_view).text = poi.name

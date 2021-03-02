@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,7 +17,8 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.findNavController()
-
+        findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+                .setupWithNavController(navController)
     }
 
     override fun onStart() {
