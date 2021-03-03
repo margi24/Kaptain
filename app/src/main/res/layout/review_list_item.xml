@@ -13,7 +13,7 @@
     android:layout_marginStart="@dimen/review_card_margin"
     >
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -21,51 +21,54 @@
             android:id="@+id/user_image"
             android:layout_width="@dimen/review_img_dimens"
             android:layout_height="@dimen/review_img_dimens"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="20dp"
             android:contentDescription="@string/user_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_menu_myplaces" />
 
         <TextView
             android:id="@+id/reviewer_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/user_image"
-            tools:ignore="RelativeOverlap"
+            app:layout_constraintStart_toEndOf="@id/user_image"
+            app:layout_constraintEnd_toStartOf="@+id/review_rating_view"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Username" />
 
         <TextView
             android:id="@+id/review_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/reviewer_name"
-            android:layout_toEndOf="@+id/user_image"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/reviewer_name"
+            app:layout_constraintStart_toStartOf="@id/reviewer_name"
+            app:layout_constraintTop_toBottomOf="@id/reviewer_name"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/review_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/review_title"
-            android:layout_toEndOf="@+id/user_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/reviewer_name"
+            app:layout_constraintStart_toStartOf="@id/reviewer_name"
+            app:layout_constraintTop_toBottomOf="@id/review_title"
             tools:text="Text" />
 
         <RatingBar
             android:id="@+id/review_rating_view"
             style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/review_card_margin"
             android:layout_marginEnd="@dimen/review_card_margin"
             android:isIndicator="true"
             android:numStars="@integer/nr_stars"
             android:progressTint="@color/purple_500"
             android:stepSize="0.1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:rating="5" />
 
         <TextView
@@ -73,11 +76,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/review_rating_view"
-            android:layout_alignParentEnd="true"
-            android:textStyle="italic"
             android:layout_marginEnd="@dimen/review_card_margin"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/review_rating_view"
             tools:text="20/20/02" />
-    </RelativeLayout>
-
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

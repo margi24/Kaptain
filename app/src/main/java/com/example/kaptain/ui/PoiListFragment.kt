@@ -1,7 +1,6 @@
 package com.example.kaptain.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -12,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kaptain.R
-import com.example.kaptain.TAG
 import com.example.kaptain.data.PointOfInterest
 import com.example.kaptain.data.poiList
 import com.example.kaptain.viewModel.PoiViewModel
