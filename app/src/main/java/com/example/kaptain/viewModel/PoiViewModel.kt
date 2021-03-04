@@ -1,25 +1,27 @@
 package com.example.kaptain.viewModel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.kaptain.TAG
+import kotlinx.coroutines.flow.collect
+import com.example.kaptain.data.PoiDatabase
 import com.example.kaptain.data.PointOfInterest
 import com.example.kaptain.repository.PoiRepository
 import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class PoiViewModel : ViewModel() {
+class PoiViewModel(application: Application) : AndroidViewModel(application) {
+
+    private var poiRepository: PoiRepository
 
     init {
         Log.d(TAG, "init called")
-        repeatRequest()
+        val poiDao = PoiDatabase.getDatabase(application, viewModelScope).poiDao()
+        poiRepository = PoiRepository(poiDao)
+       // repeatRequest()
     }
 
     private val poiListLiveData: MutableLiveData<List<PointOfInterest>> by lazy {
@@ -47,7 +49,7 @@ class PoiViewModel : ViewModel() {
     private fun loadPoiList() {
         isLoading.postValue(true)
         viewModelScope.launch(IO) {
-            PoiRepository.getPoiList().collect {
+            poiRepository.getPoiList().collect {
                 poiListLiveData.postValue(it)
                 isLoading.postValue(false)
             }
@@ -57,8 +59,10 @@ class PoiViewModel : ViewModel() {
     private fun loadPoi(id: Long) {
         isLoading.postValue(true)
         viewModelScope.launch(IO) {
-            poiLiveData.postValue(PoiRepository.getPoi(id))
-            isLoading.postValue(false)
+            poiRepository.getPoi(id).collect {
+                poiLiveData.postValue(it)
+                isLoading.postValue(false)
+            }
         }
     }
 
