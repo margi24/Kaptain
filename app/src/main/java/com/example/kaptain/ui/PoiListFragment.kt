@@ -10,9 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.kaptain.R
 import com.example.kaptain.data.PointOfInterest
-import com.example.kaptain.data.poiList
 import com.example.kaptain.viewModel.PoiViewModel
 
 class PoiListFragment : Fragment(R.layout.poi_list_fragment) {
@@ -20,7 +20,6 @@ class PoiListFragment : Fragment(R.layout.poi_list_fragment) {
     inner class PoiListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameView = itemView.findViewById<TextView>(R.id.poi_item_name_view)
         private val typeView = itemView.findViewById<TextView>(R.id.poi_item_type_view)
-
 
         fun bind(poi: PointOfInterest) {
             nameView.text = poi.name
@@ -49,7 +48,7 @@ class PoiListFragment : Fragment(R.layout.poi_list_fragment) {
         override fun getItemCount(): Int = pointsOfInterest.size
     }
 
-    private var pointsOfInterest = poiList
+    private var pointsOfInterest = listOf<PointOfInterest>()
     private var adapter = PoiListAdapter()
     private val viewModel: PoiViewModel by viewModels()
 
@@ -60,7 +59,15 @@ class PoiListFragment : Fragment(R.layout.poi_list_fragment) {
             adapter = this@PoiListFragment.adapter
         }
 
-        viewModel.getPoiList().observe( viewLifecycleOwner, Observer {
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeToRefresh)
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.getPoiList()
+        }
+
+        viewModel.getLoading().observe(viewLifecycleOwner, Observer {
+            swipeRefreshLayout.isRefreshing = it })
+
+        viewModel.getPoiList().observe(viewLifecycleOwner, Observer {
             it?.let {
                 pointsOfInterest = it
                 adapter.notifyDataSetChanged()

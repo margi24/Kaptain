@@ -5,17 +5,21 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.kaptain.R
 import com.example.kaptain.TAG
-import com.example.kaptain.data.poiList
 import com.example.kaptain.viewModel.PoiViewModel
 
 class PoiDetailsFragment : Fragment() {
@@ -25,6 +29,8 @@ class PoiDetailsFragment : Fragment() {
     private lateinit var ratingTextView: RatingBar
     private lateinit var numReviewsTextView: TextView
     private lateinit var reviewsButton: Button
+    private lateinit var groupDetails: Group
+    private lateinit var progressBar: ProgressBar
 
     private val args: PoiDetailsFragmentArgs by navArgs()
     private val viewModel: PoiViewModel by viewModels()
@@ -51,33 +57,34 @@ class PoiDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d(TAG, "onViewCreated: called")
 
-        val poiId = args.poiId
-        viewModel.getPoi(poiId)
-        val poi = poiList.find { it.id == poiId }
         view.apply {
             nameTextView = findViewById(R.id.poi_name_view)
             typeTextView = findViewById(R.id.poi_type_view)
             ratingTextView = findViewById(R.id.poi_rating_view)
             numReviewsTextView = findViewById(R.id.poi_num_reviews_view)
             reviewsButton = findViewById(R.id.poi_view_reviews_button)
+            groupDetails = findViewById(R.id.poi_details_group)
+            progressBar = findViewById(R.id.poi_progress)
         }
 
-        poi?.let {
-            view.apply {
-                findViewById<TextView>(R.id.poi_name_view).text = poi.name
-                findViewById<TextView>(R.id.poi_type_view).text = poi.poiType
-                findViewById<RatingBar>(R.id.poi_rating_view).rating =
-                        poi.reviewSummary.averageRating.toFloat()
-                findViewById<TextView>(R.id.poi_num_reviews_view).text =
-                        getString(R.string.label_num_reviews, poi.reviewSummary.numberOfReviews)
-                findViewById<Button>(R.id.poi_view_reviews_button).isEnabled =
-                        poi.reviewSummary.numberOfReviews > 0
-                findViewById<Button>(R.id.poi_view_reviews_button).setOnClickListener {
-                    findNavController().navigate(
-                            PoiDetailsFragmentDirections.actionPoiDetailsFragmentToReviewListFragment(poiId)
-                    )
-                }
-            }
+        viewModel.getLoading().observe(viewLifecycleOwner, Observer {
+            progressBar.visibility = if (it) VISIBLE else GONE
+
+        })
+
+        viewModel.getPoi(args.poiId).observe(viewLifecycleOwner, Observer {
+            groupDetails.visibility = VISIBLE
+            nameTextView.text = it.name
+            typeTextView.text = it.poiType
+            ratingTextView.rating = it.reviewSummary.averageRating.toFloat()
+            numReviewsTextView.text = getString(R.string.label_num_reviews, it.reviewSummary.numberOfReviews)
+            reviewsButton.isEnabled = it.reviewSummary.numberOfReviews > 0
+        })
+
+        reviewsButton.setOnClickListener {
+            findNavController().navigate(
+                   PoiDetailsFragmentDirections.actionPoiDetailsFragmentToReviewListFragment(args.poiId)
+            )
         }
     }
 

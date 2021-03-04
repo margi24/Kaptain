@@ -1,8 +1,5 @@
 package com.example.kaptain.data
 
-import java.time.LocalDate
-import java.util.*
-
 data class PointOfInterest(
         val id: Long,
         val mapLocation: MapLocation,
