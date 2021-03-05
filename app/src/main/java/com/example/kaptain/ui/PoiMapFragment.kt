@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.kaptain.R
+import com.example.kaptain.data.PoiData
 import com.example.kaptain.data.poiList
 import com.example.kaptain.viewModel.PoiViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,15 +21,16 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class PoiMapFragment : Fragment(R.layout.poi_map_fragment), GoogleMap.OnInfoWindowClickListener {
 
-    private var pointsOfInterest = poiList
+    private var poiData = listOf<PoiData>()
     private lateinit var mapFragment: SupportMapFragment
     private val viewModel: PoiViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-        viewModel.getPoiList().observe(viewLifecycleOwner, Observer {
+        viewModel.getPoiDataList().observe(viewLifecycleOwner, Observer {
             it?.let {
-                pointsOfInterest = it
+                poiData = it
                 refreshMap()
             }
         })
@@ -36,12 +38,12 @@ class PoiMapFragment : Fragment(R.layout.poi_map_fragment), GoogleMap.OnInfoWind
 
     override fun onInfoWindowClick(selectedMarker: Marker?) {
         selectedMarker?.let { marker ->
-            val poi = pointsOfInterest.find {
+            val poi = poiData.find {
                 it.mapLocation.latitude == marker.position.latitude && it.mapLocation.longitude == marker.position.longitude
             }
-            poi?.let {
+            poi?.let {poiData ->
                 findNavController().navigate(
-                        PoiMapFragmentDirections.actionPoiMapFragmentToPoiDetailsFragment(it.id)
+                        PoiMapFragmentDirections.actionPoiMapFragmentToPoiDetailsFragment(poiData.poi.id)
                 )
             }
         }
@@ -51,10 +53,10 @@ class PoiMapFragment : Fragment(R.layout.poi_map_fragment), GoogleMap.OnInfoWind
         mapFragment.getMapAsync { map ->
             map.setOnInfoWindowClickListener(this)
             val latLngBoundsBuilder = LatLngBounds.builder()
-            pointsOfInterest.forEach { poi ->
+            poiData.forEach { poi ->
                 LatLng(poi.mapLocation.latitude, poi.mapLocation.longitude).also {
                     latLngBoundsBuilder.include(it)
-                    map.addMarker(MarkerOptions().position(it).title(poi.name))
+                    map.addMarker(MarkerOptions().position(it).title(poi.poi.name))
                 }
             }
             map.animateCamera(

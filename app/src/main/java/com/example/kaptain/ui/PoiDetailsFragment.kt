@@ -72,13 +72,16 @@ class PoiDetailsFragment : Fragment() {
 
         })
 
-        viewModel.getPoi(args.poiId).observe(viewLifecycleOwner, Observer {
-            groupDetails.visibility = VISIBLE
-            nameTextView.text = it.name
-            typeTextView.text = it.poiType
-            ratingTextView.rating = it.reviewSummary.averageRating.toFloat()
-            numReviewsTextView.text = getString(R.string.label_num_reviews, it.reviewSummary.numberOfReviews)
-            reviewsButton.isEnabled = it.reviewSummary.numberOfReviews > 0
+        viewModel.getPoiData(args.poiId).observe(viewLifecycleOwner, Observer {poiData ->
+            poiData.let {
+                groupDetails.visibility = VISIBLE
+                nameTextView.text = it.poi.name
+                typeTextView.text = it.poi.poiType
+                ratingTextView.rating = it.reviewSummary.averageRating.toFloat()
+                numReviewsTextView.text =
+                    getString(R.string.label_num_reviews, it.reviewSummary.numberOfReviews)
+                reviewsButton.isEnabled = it.reviewSummary.numberOfReviews > 0
+            }
         })
 
         reviewsButton.setOnClickListener {
