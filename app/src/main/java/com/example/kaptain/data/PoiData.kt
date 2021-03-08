@@ -9,7 +9,12 @@ data class PointOfInterest(
         val name: String,
         val poiType: String
 )
-@Entity(tableName = "map_location_table")
+@Entity(tableName = "map_location_table",
+        foreignKeys = [ForeignKey(
+                entity = PointOfInterest::class,
+                parentColumns = ["id"],
+                childColumns = ["poiId"],
+                onDelete = ForeignKey.CASCADE)])
 data class MapLocation(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "map_id")
@@ -20,7 +25,12 @@ data class MapLocation(
 ){
         constructor(poiId: Long,latitude: Double,longitude: Double): this(0, poiId, latitude, longitude)
 }
-@Entity(tableName = "review_summary_table")
+@Entity(tableName = "review_summary_table",
+        foreignKeys = [ForeignKey(
+                entity = PointOfInterest::class,
+                parentColumns = ["id"],
+                childColumns = ["poiId"],
+                onDelete = ForeignKey.CASCADE)])
 data class ReviewSummary(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "review_summary_id")
@@ -39,20 +49,33 @@ data class PoiData(
                 entityColumn = "poiId"
         )
         val mapLocation: MapLocation,
-
         @Relation(
                 parentColumn = "id",
                 entityColumn = "poiId"
         )
-        val reviewSummary: ReviewSummary
+        val reviewSummary: ReviewSummary,
+        @Relation(
+                parentColumn = "id",
+                entityColumn = "poiId"
+        )
+        val reviews: List<Review>?
 )
 
+@Entity(tableName = "review_table",
+        foreignKeys = [ForeignKey(
+                entity = PointOfInterest::class,
+                parentColumns = ["id"],
+                childColumns = ["poiId"],
+                onDelete = ForeignKey.CASCADE)]
+)
 data class Review(
+        @PrimaryKey
         val id: Long,
-        val reviewerName: String,
-        val reviewTitle: String,
-        val reviewText: String,
-        val rating: Double,
+        val reviewerName: String = "",
+        val reviewTitle: String = "",
+        val reviewText: String = "",
+        val rating: Double = 0.0,
         val dateAdded: String,
         val poiId: Long
 )
+

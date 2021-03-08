@@ -16,6 +16,9 @@ interface PoiDao {
     suspend fun insertReviewSummary(reviewSummary: ReviewSummary)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllReview(review: List<Review>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllPoi(poiList: List<PointOfInterest>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -24,8 +27,8 @@ interface PoiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllReviewSummary(reviewSummaryList: List<ReviewSummary>)
 
-    @Delete
-    suspend fun deletePoi(poi: PointOfInterest)
+    @Query("DELETE FROM poi_table WHERE id=:id")
+    suspend fun deletePoi(id: Long)
 
     @Update
     suspend fun updatePoi(poi: PointOfInterest)
@@ -43,4 +46,8 @@ interface PoiDao {
     @Transaction
     @Query("SELECT * FROM poi_table WHERE id=:id")
     suspend fun getPoiData(id: Long): PoiData
+
+    @Transaction
+    @Query("SELECT * FROM poi_table WHERE id=:id")
+    suspend fun getPoiWithReviews(id:Long): PoiData
 }

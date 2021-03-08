@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [PointOfInterest::class, MapLocation::class, ReviewSummary::class],version = 2)
+@Database(entities = [PointOfInterest::class, MapLocation::class, ReviewSummary::class, Review::class],version = 3)
 abstract class PoiDatabase: RoomDatabase() {
 
     abstract fun poiDao(): PoiDao
@@ -25,7 +25,7 @@ abstract class PoiDatabase: RoomDatabase() {
                     PoiDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .addCallback(PoiDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
@@ -55,12 +55,22 @@ abstract class PoiDatabase: RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object: Migration(2,3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE `review_table` (`id` LONG NOT NULL, `reviewerName` TEXT NOT NULL, " +
+                            "`reviewTitle` TEXT NOT NULL, `reviewText` TEXT NOT NULL, `rating` DOUBLE NOT NULL," +
+                            "`dateAdded` TEXT NOT NULL, `poiId` LONG NOT NULL) "
+                )
+            }
+        }
+
         class PoiDatabaseCallback(private val scope: CoroutineScope) : RoomDatabase.Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
                 INSTANCE?.let { database ->
                     scope.launch(Dispatchers.IO) {
-                       populateDatabase(database.poiDao())
+                        populateDatabase(database.poiDao())
                     }
                 }
             }
@@ -69,6 +79,7 @@ abstract class PoiDatabase: RoomDatabase() {
                 poiDao.insertAllPoi(poiList)
                 poiDao.insertAllMapLocation(mapLocation)
                 poiDao.insertAllReviewSummary(reviewSummaryList)
+                poiDao.insertAllReview(reviewList)
             }
         }
     }

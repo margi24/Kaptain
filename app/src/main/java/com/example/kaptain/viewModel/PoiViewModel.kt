@@ -16,13 +16,12 @@ import kotlinx.coroutines.launch
 
 class PoiViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var poiRepository: PoiRepository
+    private val poiRepository: PoiRepository by lazy {
+        PoiRepository(PoiDatabase.getDatabase(application,viewModelScope).poiDao())
+    }
 
     init {
         Log.d(TAG, "init called")
-        val poiDao = PoiDatabase.getDatabase(application, viewModelScope).poiDao()
-        poiRepository = PoiRepository(poiDao)
-       // repeatRequest()
     }
 
     private val poiDataListLiveData: MutableLiveData<List<PoiData>> by lazy {
@@ -33,21 +32,12 @@ class PoiViewModel(application: Application) : AndroidViewModel(application) {
         MutableLiveData<List<PointOfInterest>>()
     }
 
-    private val poiLiveData: MutableLiveData<PointOfInterest> by lazy {
-        MutableLiveData<PointOfInterest>()
-    }
-
     private val poiDataLiveData: MutableLiveData<PoiData> by lazy {
         MutableLiveData<PoiData>()
     }
 
     private val isLoading: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
-    }
-
-    fun getPoi(id: Long): LiveData<PointOfInterest> {
-        loadPoi(id)
-        return poiLiveData
     }
 
     fun getPoiList(): LiveData<List<PointOfInterest>> {
@@ -83,15 +73,6 @@ class PoiViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun loadPoi(id: Long) {
-        isLoading.postValue(true)
-        viewModelScope.launch(IO) {
-            poiRepository.getPoi(id).collect {
-                poiLiveData.postValue(it)
-                isLoading.postValue(false)
-            }
-        }
-    }
 
     private fun loadPoiData(poiId: Long) {
         isLoading.postValue(true)
@@ -99,6 +80,13 @@ class PoiViewModel(application: Application) : AndroidViewModel(application) {
             delay(2000)
             poiDataLiveData.postValue(poiRepository.getPoiData(poiId))
             isLoading.postValue(false)
+        }
+    }
+
+    fun deletePoi(poiId:Long) {
+        viewModelScope.launch(IO) {
+            poiRepository.deletePoi(poiId)
+            loadPoiDataList()
         }
     }
 

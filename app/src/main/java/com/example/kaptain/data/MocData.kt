@@ -59,7 +59,12 @@ val reviewList = listOf(
     )
 )
 
-val mapLocation = listOf<MapLocation>(
+val mapLocation = listOf(
+    MapLocation(
+        46067,
+        37.8180564724432,
+        -122.52704143524173
+    ),
     MapLocation(
         12975,
         37.8770892291283,
@@ -105,7 +110,7 @@ val mapLocation = listOf<MapLocation>(
         -122.50570595169079
     )
 )
-val reviewSummaryList = listOf<ReviewSummary>(
+val reviewSummaryList = listOf(
     ReviewSummary(
         46067,
         3.0,
