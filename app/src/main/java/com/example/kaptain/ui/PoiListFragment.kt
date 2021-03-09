@@ -29,7 +29,10 @@ class PoiListFragment : Fragment(R.layout.poi_list_fragment) {
                 //delete on click
 //                viewModel.deletePoi(poi.id)
                 findNavController().navigate(
-                        PoiListFragmentDirections.actionPoiListFragmentToPoiDetailsFragment(poi.id)
+                        PoiListFragmentDirections.actionPoiListFragmentToPoiDetailsFragment(
+                            poi.id,
+                            poi.name,
+                            poi.poiType)
                 )
             }
         }

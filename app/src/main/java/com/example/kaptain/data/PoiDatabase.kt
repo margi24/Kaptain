@@ -8,8 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [PointOfInterest::class, MapLocation::class, ReviewSummary::class, Review::class],version = 3)
-abstract class PoiDatabase: RoomDatabase() {
+@Database(
+    entities = [PointOfInterest::class, MapLocation::class, ReviewSummary::class, Review::class],
+    version = 5
+)
+abstract class PoiDatabase : RoomDatabase() {
 
     abstract fun poiDao(): PoiDao
 
@@ -20,12 +23,12 @@ abstract class PoiDatabase: RoomDatabase() {
 
         fun getDatabase(context: Context, scope: CoroutineScope): PoiDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance =  Room.databaseBuilder(
+                val instance = Room.databaseBuilder(
                     context.applicationContext,
                     PoiDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_2_3)
+                    .fallbackToDestructiveMigration()
                     .addCallback(PoiDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
@@ -40,7 +43,7 @@ abstract class PoiDatabase: RoomDatabase() {
                             "`poiType` TEXT NOT NULL, PRIMARY KEY(`id`))"
                 )
                 database.execSQL(
-                    "CREATE TABLE `map_location_table` (`map_id` LONG NOT NULL,`poiId` LONG NOT NULL,"+
+                    "CREATE TABLE `map_location_table` (`map_id` LONG NOT NULL,`poiId` LONG NOT NULL," +
                             "`latitude` DOUBLE NOT NULL, `longitude` DOUBLE NOT NULL," +
                             "PRIMARY KEY(`map_id`))"
                 )
@@ -55,7 +58,7 @@ abstract class PoiDatabase: RoomDatabase() {
             }
         }
 
-        private val MIGRATION_2_3 = object: Migration(2,3) {
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "CREATE TABLE `review_table` (`id` LONG NOT NULL, `reviewerName` TEXT NOT NULL, " +
@@ -68,9 +71,9 @@ abstract class PoiDatabase: RoomDatabase() {
         class PoiDatabaseCallback(private val scope: CoroutineScope) : RoomDatabase.Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
-                INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
-                        populateDatabase(database.poiDao())
+                scope.launch(Dispatchers.IO) {
+                    INSTANCE?.poiDao()?.let {
+                        populateDatabase(it)
                     }
                 }
             }

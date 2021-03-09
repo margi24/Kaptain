@@ -6,7 +6,7 @@ import androidx.room.*
 data class PointOfInterest(
         @PrimaryKey
         val id: Long,
-        val name: String,
+        val name: String?,
         val poiType: String
 )
 @Entity(tableName = "map_location_table",
@@ -34,8 +34,8 @@ data class MapLocation(
 data class ReviewSummary(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "review_summary_id")
-        val reviewSummaryId: Long,
-        val poiId: Long,
+        val reviewSummaryId: Long?,
+        val poiId: Long?,
         val averageRating: Double,
         val numberOfReviews: Int
 ) {
@@ -53,7 +53,7 @@ data class PoiData(
                 parentColumn = "id",
                 entityColumn = "poiId"
         )
-        val reviewSummary: ReviewSummary,
+        val reviewSummary: ReviewSummary?,
         @Relation(
                 parentColumn = "id",
                 entityColumn = "poiId"

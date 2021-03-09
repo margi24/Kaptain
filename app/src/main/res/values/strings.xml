@@ -6,4 +6,5 @@
     <string name="label_list">List</string>
     <string name="label_map">Map</string>
     <string name="user_image">user image</string>
+    <string name="this_point_does_not_have_any_rating">This point does not have any rating</string>
 </resources>

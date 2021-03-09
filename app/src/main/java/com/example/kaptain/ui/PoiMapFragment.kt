@@ -28,10 +28,12 @@ class PoiMapFragment : Fragment(R.layout.poi_map_fragment), GoogleMap.OnInfoWind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        view.doOnLayout {
+            refreshMap()
+        }
         viewModel.getPoiDataList().observe(viewLifecycleOwner, Observer {
             it?.let {
                 poiData = it
-                refreshMap()
             }
         })
     }
@@ -43,7 +45,10 @@ class PoiMapFragment : Fragment(R.layout.poi_map_fragment), GoogleMap.OnInfoWind
             }
             poi?.let {poiData ->
                 findNavController().navigate(
-                        PoiMapFragmentDirections.actionPoiMapFragmentToPoiDetailsFragment(poiData.poi.id)
+                        PoiMapFragmentDirections.actionPoiMapFragmentToPoiDetailsFragment(
+                            poiData.poi.id,
+                            poiData.poi.name,
+                            poiData.poi.poiType)
                 )
             }
         }

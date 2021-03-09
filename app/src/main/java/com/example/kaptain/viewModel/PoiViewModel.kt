@@ -3,21 +3,20 @@ package com.example.kaptain.viewModel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.kaptain.EmptyResultException
+import com.example.kaptain.KaptainException
 import com.example.kaptain.TAG
-import com.example.kaptain.data.PoiData
+import com.example.kaptain.data.*
 import kotlinx.coroutines.flow.collect
-import com.example.kaptain.data.PoiDatabase
-import com.example.kaptain.data.PointOfInterest
+import com.example.kaptain.network.KaptainWebservice
 import com.example.kaptain.repository.PoiRepository
-import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class PoiViewModel(application: Application) : AndroidViewModel(application) {
 
     private val poiRepository: PoiRepository by lazy {
-        PoiRepository(PoiDatabase.getDatabase(application,viewModelScope).poiDao())
+        PoiRepository(PoiDatabase.getDatabase(application,viewModelScope).poiDao(), KaptainWebservice())
     }
 
     init {
@@ -34,6 +33,10 @@ class PoiViewModel(application: Application) : AndroidViewModel(application) {
 
     private val poiDataLiveData: MutableLiveData<PoiData> by lazy {
         MutableLiveData<PoiData>()
+    }
+
+    private val poiReviewSummary: MutableLiveData<Resource<ReviewSummary>> by lazy {
+        MutableLiveData<Resource<ReviewSummary>>()
     }
 
     private val isLoading: MutableLiveData<Boolean> by lazy {
@@ -81,6 +84,29 @@ class PoiViewModel(application: Application) : AndroidViewModel(application) {
             poiDataLiveData.postValue(poiRepository.getPoiData(poiId))
             isLoading.postValue(false)
         }
+    }
+
+    fun getPoiSummary(id:Long): LiveData<Resource<ReviewSummary>> {
+        viewModelScope.launch(IO) {
+            try {
+                withContext(Dispatchers.IO) {
+                    poiReviewSummary.postValue(Resource.Loading())
+                    val poiReview = poiRepository.getPoiSummary(id)
+                    val success = Resource.Success<ReviewSummary>(poiReview)
+                    poiReviewSummary.postValue(success)
+                }
+            } catch (e: EmptyResultException) {
+                val message = e.message ?: ""
+                poiReviewSummary.postValue(Resource.Error(message, type = EmptyResultException(message)))
+            }
+            catch (e: Exception) {
+                val message = e.message ?: ""
+                Log.d(TAG, "Exception $message")
+                        poiReviewSummary.postValue(Resource.Error(message))
+
+                }
+            }
+        return poiReviewSummary
     }
 
     fun deletePoi(poiId:Long) {
